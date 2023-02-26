@@ -23,6 +23,7 @@ def pregunta_01():
 
     """
     return tbl0.shape[0]
+#hmm
 
 
 
