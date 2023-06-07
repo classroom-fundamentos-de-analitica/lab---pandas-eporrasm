@@ -172,6 +172,16 @@ def pregunta_10():
 
 
 def pregunta_11():
+
+    grouped = tbl1.groupby("_c0")["_c4"].apply(list)        #vuelve una lista los elementos agrupados
+
+    ans = pd.DataFrame()
+    ans["_c4"] = grouped
+    ans["_c4"] = ans["_c4"].apply(sorted)                   
+    ans["_c4"] = ans["_c4"].apply(",".join)
+    ans.insert(loc = 0, column = "_c0", value = ans.index)  #_c0 había quedado de indice, entonces se pone columna
+    ans = ans.reset_index(drop = True)      #se resetea el indice pa que quede solo de número
+
     """
     Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
     la columna _c4 del archivo `tbl1.tsv`.
@@ -187,12 +197,22 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    r = tbl1.sort_values("_c4")
-    r = r.groupby("_c0").agg({"_c4": ",".join})
-    return r
+    return ans
 
 
 def pregunta_12():
+
+    grouped = tbl2.groupby("_c0")
+    data = []
+
+    for key, item in grouped:
+        texto=[]
+        for letras,num in zip(list(grouped.get_group(key)["_c5a"]),list(grouped.get_group(key)["_c5b"])):
+            texto.append(letras+":"+str(num))
+        data.append((key,','.join(sorted(texto))))
+
+    ans = pd.DataFrame(data = data, columns = ["_c0", "_c5"])
+
     """
     Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
     la columna _c5a y _c5b (unidos por ':') de la tabla `tbl2.tsv`.
@@ -207,11 +227,8 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    r = tbl2.sort_values("_c5a")
-    r["_c5b"] = r["_c5b"].apply(str)
-    r = r.assign(_c5 = r["_c5a"].str[:] +":"+ r["_c5b"].str[:])
-    r = r.groupby("_c0").agg({"_c5": ",".join})
-    return r
+    return ans
+
 
 
 def pregunta_13():
